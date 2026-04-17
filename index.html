@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>英语连词成句单题闯关版</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+      background: #f4f7fb;
+      color: #1f2937;
+    }
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+    }
+    h1 {
+      text-align: center;
+      color: #1d4ed8;
+      margin: 0 0 8px;
+      font-size: 34px;
+    }
+    .subtitle {
+      text-align: center;
+      color: #6b7280;
+      margin-bottom: 18px;
+      font-size: 16px;
+    }
+    .start-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+    .start-btn {
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      padding: 14px 30px;
+      font-size: 22px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 5px 14px rgba(0,0,0,.08);
+    }
+    .start-btn:hover { background: #1d4ed8; }
+
+    .topbar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+    }
+    .info-box, .timer-box {
+      background: #fff;
+      border: 1px solid #dbe3ee;
+      border-radius: 16px;
+      padding: 12px 18px;
+      font-size: 20px;
+      font-weight: 800;
+      box-shadow: 0 4px 14px rgba(0,0,0,.05);
+    }
+    .info-box { color: #1d4ed8; }
+    .timer-box { color: #dc2626; }
+
+    .card {
+      background: #fff;
+      border-radius: 24px;
+      padding: 28px 24px;
+      box-shadow: 0 12px 30px rgba(0,0,0,.08);
+      border: 1px solid #e5e7eb;
+      display: none;
+    }
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .question-title {
+      font-size: 28px;
+      font-weight: 900;
+      color: #111827;
+    }
+    .page-tag {
+      font-size: 18px;
+      font-weight: 800;
+      background: #dbeafe;
+      color: #1d4ed8;
+      padding: 8px 14px;
+      border-radius: 999px;
+    }
+    .instruction {
+      font-size: 20px;
+      color: #4b5563;
+      margin-bottom: 16px;
+    }
+    .answer-area, .word-bank {
+      min-height: 84px;
+      border-radius: 18px;
+      padding: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+    .answer-area {
+      background: #eff6ff;
+      border: 3px dashed #93c5fd;
+      margin-bottom: 16px;
+    }
+    .word-bank {
+      background: #f9fafb;
+      border: 3px dashed #d1d5db;
+    }
+    .token {
+      background: #fff;
+      border: 2px solid #cbd5e1;
+      border-radius: 14px;
+      padding: 12px 18px;
+      font-size: 28px;
+      line-height: 1.2;
+      font-weight: 700;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,.05);
+      transition: .15s;
+    }
+    .token:hover {
+      transform: translateY(-2px);
+      background: #f8fafc;
+    }
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+    button {
+      border: none;
+      border-radius: 14px;
+      padding: 12px 20px;
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+      color: #fff;
+      box-shadow: 0 5px 14px rgba(0,0,0,.08);
+    }
+    .btn-check { background: #10b981; }
+    .btn-check:hover { background: #059669; }
+    .btn-reset { background: #f59e0b; }
+    .btn-reset:hover { background: #d97706; }
+
+    .finish-box {
+      display: none;
+      background: #fff;
+      border-radius: 24px;
+      padding: 34px 24px;
+      text-align: center;
+      box-shadow: 0 12px 30px rgba(0,0,0,.08);
+      border: 4px solid #16a34a;
+    }
+    .finish-title {
+      font-size: 34px;
+      color: #15803d;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+    .finish-text {
+      font-size: 24px;
+      color: #111827;
+      font-weight: 700;
+    }
+
+    .modal-mask {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.35);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 20px;
+    }
+    .modal-mask.show { display: flex; }
+    .modal-box {
+      width: min(90vw, 700px);
+      border-radius: 24px;
+      padding: 30px 24px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,.18);
+    }
+    .modal-box.normal {
+      background: #fff;
+      border: 4px solid #dc2626;
+    }
+    .modal-box.fail-total {
+      background: #dc2626;
+      border: 4px solid #ffffff;
+      color: #ffffff;
+    }
+    .modal-title {
+      font-size: 34px;
+      font-weight: 900;
+      margin-bottom: 14px;
+    }
+    .normal .modal-title { color: #dc2626; }
+    .fail-total .modal-title { color: #ffffff; }
+    .modal-content {
+      font-size: 26px;
+      line-height: 1.8;
+      white-space: pre-line;
+      font-weight: 700;
+    }
+    .normal .modal-content { color: #111827; }
+    .fail-total .modal-content { color: #ffffff; }
+    .fail-list {
+      margin-top: 16px;
+      text-align: left;
+      max-height: 42vh;
+      overflow: auto;
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.12);
+      border: 2px solid rgba(255,255,255,.7);
+    }
+    .fail-item {
+      font-size: 21px;
+      line-height: 1.7;
+      margin-bottom: 10px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .fail-item:last-child { margin-bottom: 0; }
+    .modal-btn {
+      margin-top: 20px;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 24px;
+      font-size: 20px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .normal .modal-btn {
+      background: #dc2626;
+      color: #fff;
+    }
+    .fail-total .modal-btn {
+      background: #ffffff;
+      color: #dc2626;
+    }
+
+    @media (max-width: 720px) {
+      h1 { font-size: 28px; }
+      .question-title { font-size: 24px; }
+      .page-tag { font-size: 16px; }
+      .instruction { font-size: 18px; }
+      .token { font-size: 22px; padding: 10px 14px; }
+      .modal-title { font-size: 28px; }
+      .modal-content { font-size: 22px; }
+      .fail-item { font-size: 18px; }
+      .info-box, .timer-box { font-size: 18px; }
+      .start-btn { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>英语连词成句单题闯关版</h1>
+    <div class="subtitle">点击开始后才出现第一题；每次只出现一题，答对自动下一题；每题限时 25 秒</div>
+
+    <div class="start-wrap">
+      <button class="start-btn" id="startBtn" onclick="startGame()">点击开始</button>
+    </div>
+
+    <div class="topbar">
+      <button onclick="restartRound()" style="background:#6366f1;color:#fff;border:none;border-radius:12px;padding:10px 18px;font-size:16px;font-weight:800;cursor:pointer;">重布置本轮</button>
+      <div class="info-box" id="progressBox">第 0 / 23 题</div>
+      <div class="timer-box" id="timerBox">倒计时：25秒</div>
+    </div>
+
+    <div class="card" id="questionCard">
+      <div class="question-header">
+        <div class="question-title" id="questionTitle">第 1 题</div>
+        <div class="page-tag" id="pageTag">书本第4页</div>
+      </div>
+      <div class="instruction">请按正确顺序点击词块组成句子：</div>
+      <div class="answer-area" id="answerArea"></div>
+      <div class="word-bank" id="wordBank"></div>
+      <div class="controls">
+        <button class="btn-check" onclick="checkCurrent()">检查本题</button>
+        <button class="btn-reset" onclick="resetCurrent()">重置本题</button>
+      </div>
+    </div>
+
+    <div class="finish-box" id="finishBox">
+      <div class="finish-title" id="finishTitle">恭喜🎉全部闯关成功！</div>
+      <div class="finish-text" id="finishText"></div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="modal">
+    <div class="modal-box normal" id="modalBox">
+      <div class="modal-title" id="modalTitle">错误！</div>
+      <div class="modal-content" id="modalContent"></div>
+      <div class="fail-list" id="failList" style="display:none;"></div>
+      <button class="modal-btn" id="modalBtn" onclick="closeModal()">我知道了</button>
+    </div>
+  </div>
+
+  <script>
+    const originalQuestions = [
+      { page: '书本第4页', answer: ['When', 'do', 'you', 'finish', 'class', 'in', 'the', 'morning', '?'] },
+      { page: '书本第7页', answer: ['What', 'do', 'you', 'do', 'on', 'the', 'weekend', '?'] },
+      { page: '书本第7页', answer: ['That', 'sounds', 'like', 'a', 'lot', 'of', 'fun', '.'] },
+      { page: '书本第7页', answer: ['You', 'need', 'a', 'robot', 'to', 'help', 'you', '.'] },
+      { page: '书本第80页', answer: ['The', 'early', 'bird', 'catches', 'the', 'worm', '.'] },
+      { page: '书本第14页', answer: ['Which', 'season', 'do', 'you', 'like', 'best', '?'] },
+      { page: '书本第13页', answer: ['I', 'like', 'summer', 'best', 'because', 'of', 'Children’s', 'Day', '.'] },
+      { page: '书本第15页', answer: ['Spring', 'is', 'green', 'with', 'flowers', 'and', 'songs', '.'] },
+      { page: '书本第15页', answer: ['Summer', 'is', 'hot', 'and', 'the', 'days', 'are', 'long', '.'] },
+      { page: '书本第15页', answer: ['Autumn', 'is', 'golden', 'and', 'farmers', 'are', 'busy', '.'] },
+      { page: '书本第15页', answer: ['Winter', 'is', 'white', 'and', 'the', 'year', 'is', 'gone', '.'] },
+      { page: '书本第17页', answer: ['The', 'weather', 'is', 'good', 'and', 'the', 'colours', 'are', 'beautiful', '.'] },
+      { page: '书本第27页', answer: ['When', 'is', 'the', 'school', 'trip', 'this', 'year', '?'] },
+      { page: '书本第27页', answer: ['We', 'have', 'a', 'few', 'fun', 'things', 'in', 'spring', '.'] },
+      { page: '书本第28页', answer: ['Mid-Autumn', 'Festival', 'is', 'usually', 'in', 'September', 'or', 'October', '.'] },
+      { page: '书本第34页', answer: ['It', 'is', 'warm', 'in', 'the', 'day', 'and', 'cool', 'at', 'night', '.'] },
+      { page: '书本第29页', answer: ['Please', 'send', 'an', 'email', 'by', 'March', '23rd', '.'] },
+      { page: '书本第27页', answer: ['We', 'usually', 'have', 'a', 'school', 'trip', 'in', 'autumn', '.'] },
+      { page: '书本第12页', answer: ['There', 'are', 'beautiful', 'flowers', 'everywhere', '.'] },
+      { page: '书本第8页', answer: ['I', 'often', 'clean', 'my', 'room', 'with', 'my', 'mom', 'on', 'Sundays', '.'] },
+      { page: '书本第80页', answer: ['Every', 'season', 'brings', 'its', 'joy', '.'] },
+      { page: '书本第4页', answer: ['When', 'do', 'you', 'usually', 'eat', 'dinner', 'in', 'Spain', '?'] },
+      { page: '书本第19页', answer: ['There', 'is', 'lots', 'of', 'snow', 'in', 'winter', '.'] }
+    ];
+
+    let questions = [];
+    let currentIndex = 0;
+    let currentAnswer = [];
+    let currentBank = [];
+    let timer = null;
+    let timeLeft = 25;
+    let totalStartTime = 0;
+    let hadAnyMistake = false;
+    let wrongSet = [];
+    let modalMode = 'normal-next';
+
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function shuffleQuestionsForRound() {
+      questions = shuffleArray(originalQuestions.map(q => ({
+        page: q.page,
+        answer: [...q.answer]
+      })));
+    }
+
+    function displayTokenText(word) {
+      const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      const weekdays = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday','Sundays'];
+      const properExtra = ['Spain','Day','Festival'];
+
+      if (word === 'I') return 'I';
+      if (months.includes(word) || weekdays.includes(word) || properExtra.includes(word)) return word;
+      if (word.includes('-') || word.includes('’') || /[A-Z].*[A-Z]/.test(word.slice(1))) return word;
+      if (/^[A-Z][a-z]+$/.test(word)) return word.toLowerCase();
+      return word.toLowerCase();
+    }
+
+    function normalizeWord(word) {
+      return word.toLowerCase();
+    }
+
+    function isCorrectOrder(current, answer) {
+      if (current.length !== answer.length) return false;
+      for (let i = 0; i < answer.length; i++) {
+        if (normalizeWord(current[i]) !== normalizeWord(answer[i])) return false;
+      }
+      return true;
+    }
+
+    function joinSentence(arr) {
+      let text = '';
+      arr.forEach((token, idx) => {
+        if (['.', '?', '!', ','].includes(token)) {
+          text += token;
+        } else {
+          text += (idx === 0 ? '' : ' ') + token;
+        }
+      });
+      return text;
+    }
+
+    function createToken(text, onClick) {
+      const btn = document.createElement('div');
+      btn.className = 'token';
+      btn.textContent = displayTokenText(text);
+      btn.onclick = onClick;
+      return btn;
+    }
+
+    function renderCurrentQuestion() {
+      const q = questions[currentIndex];
+      document.getElementById('progressBox').textContent = `第 ${currentIndex + 1} / ${questions.length} 题`;
+      document.getElementById('questionTitle').textContent = `第 ${currentIndex + 1} 题`;
+      document.getElementById('pageTag').textContent = q.page;
+
+      const answerArea = document.getElementById('answerArea');
+      const wordBank = document.getElementById('wordBank');
+      answerArea.innerHTML = '';
+      wordBank.innerHTML = '';
+
+      currentAnswer.forEach((word, i) => {
+        answerArea.appendChild(createToken(word, () => {
+          currentBank.push(word);
+          currentAnswer.splice(i, 1);
+          renderCurrentQuestion();
+        }));
+      });
+
+      currentBank.forEach((word, i) => {
+        wordBank.appendChild(createToken(word, () => {
+          currentAnswer.push(word);
+          currentBank.splice(i, 1);
+          renderCurrentQuestion();
+        }));
+      });
+    }
+
+    function startQuestionTimer() {
+      clearInterval(timer);
+      timeLeft = 25;
+      updateTimer();
+      timer = setInterval(() => {
+        timeLeft--;
+        updateTimer();
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          handleMistake('timeout');
+        }
+      }, 1000);
+    }
+
+    function updateTimer() {
+      document.getElementById('timerBox').textContent = `倒计时：${timeLeft}秒`;
+    }
+
+    function loadQuestion(index) {
+      currentIndex = index;
+      currentAnswer = [];
+      currentBank = shuffleArray(questions[currentIndex].answer);
+      renderCurrentQuestion();
+      startQuestionTimer();
+    }
+
+    function nextQuestion() {
+      if (currentIndex < questions.length - 1) {
+        loadQuestion(currentIndex + 1);
+      } else {
+        finishAll();
+      }
+    }
+
+    function addWrongQuestion(q) {
+      const sentence = joinSentence(q.answer);
+      const key = sentence + '|' + q.page;
+      if (!wrongSet.some(item => item.key === key)) {
+        wrongSet.push({ key, sentence, page: q.page });
+      }
+    }
+
+    function handleMistake(type) {
+      const q = questions[currentIndex];
+      hadAnyMistake = true;
+      addWrongQuestion(q);
+      if (type === 'timeout') {
+        showNormalModal('已超时！', `正确句子：${joinSentence(q.answer)}\n${q.page}\n做好记号背诵三遍`);
+      } else {
+        showNormalModal('错误！', `正确句子：${joinSentence(q.answer)}\n${q.page}\n做好记号背诵三遍`);
+      }
+    }
+
+    function checkCurrent() {
+      const q = questions[currentIndex];
+      if (isCorrectOrder(currentAnswer, q.answer)) {
+        clearInterval(timer);
+        setTimeout(() => {
+          nextQuestion();
+        }, 250);
+      } else {
+        clearInterval(timer);
+        handleMistake('wrong');
+      }
+    }
+
+    function resetCurrent() {
+      currentAnswer = [];
+      currentBank = shuffleArray(questions[currentIndex].answer);
+      renderCurrentQuestion();
+      startQuestionTimer();
+    }
+
+    function showNormalModal(title, content) {
+      modalMode = 'normal-next';
+      document.getElementById('modalBox').className = 'modal-box normal';
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalContent').textContent = content;
+      document.getElementById('failList').style.display = 'none';
+      document.getElementById('failList').innerHTML = '';
+      document.getElementById('modal').classList.add('show');
+    }
+
+    function showTotalFailModal() {
+      modalMode = 'total-fail';
+      document.getElementById('modalBox').className = 'modal-box fail-total';
+      document.getElementById('modalTitle').textContent = '闯关失败❗️';
+      document.getElementById('modalContent').textContent = '请掌握以下句子';
+      const failList = document.getElementById('failList');
+      failList.style.display = 'block';
+      failList.innerHTML = wrongSet.map(item =>
+        `<div class="fail-item">• ${item.sentence}（${item.page}）</div>`
+      ).join('');
+      document.getElementById('modal').classList.add('show');
+    }
+
+    function closeModal() {
+      document.getElementById('modal').classList.remove('show');
+      if (modalMode === 'normal-next') {
+        nextQuestion();
+      }
+    }
+
+    function formatTotalTime(ms) {
+      const totalSeconds = Math.floor(ms / 1000);
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      return `${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
+    }
+
+    function finishAll() {
+      clearInterval(timer);
+      document.getElementById('questionCard').style.display = 'none';
+      const used = Date.now() - totalStartTime;
+      document.getElementById('progressBox').textContent = `第 ${questions.length} / ${questions.length} 题`;
+      document.getElementById('timerBox').textContent = '倒计时：完成';
+
+      if (hadAnyMistake) {
+        showTotalFailModal();
+      } else {
+        document.getElementById('finishBox').style.display = 'block';
+        document.getElementById('finishText').textContent = `总用时：${formatTotalTime(used)}`;
+      }
+    }
+
+    function restartRound() {
+      shuffleQuestionsForRound();
+      currentIndex = 0;
+      currentAnswer = [];
+      currentBank = [];
+      wrongSet = [];
+      hadAnyMistake = false;
+      totalStartTime = Date.now();
+      document.getElementById('finishBox').style.display = 'none';
+      document.getElementById('modal').classList.remove('show');
+      document.getElementById('questionCard').style.display = 'block';
+      loadQuestion(0);
+    }
+
+    function startGame() {
+      shuffleQuestionsForRound();
+      currentIndex = 0;
+      currentAnswer = [];
+      currentBank = [];
+      wrongSet = [];
+      hadAnyMistake = false;
+      totalStartTime = Date.now();
+
+      document.getElementById('startBtn').style.display = 'none';
+      document.getElementById('questionCard').style.display = 'block';
+      document.getElementById('finishBox').style.display = 'none';
+      document.getElementById('modal').classList.remove('show');
+
+      loadQuestion(0);
+    }
+
+    document.getElementById('modal').addEventListener('click', function(e) {
+      if (e.target.id === 'modal' && modalMode === 'normal-next') closeModal();
+    });
+
+    document.getElementById('progressBox').textContent = `第 0 / ${originalQuestions.length} 题`;
+    updateTimer();
+  </script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"7939e04a4baf43c8b86a560f74aac60e","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
